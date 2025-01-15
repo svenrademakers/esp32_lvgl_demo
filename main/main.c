@@ -1,4 +1,3 @@
-#include "draw/lv_draw_vector.h"
 #include "driver/ledc.h"
 #include "driver/spi_master.h"
 #include "esp_err.h"
@@ -11,7 +10,7 @@
 #include "hal/ledc_types.h"
 #include "hal/spi_types.h"
 #include "init.h"
-#include "lvgl.h"
+#include "lvgl_lottie.h"
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
@@ -76,7 +75,7 @@ void init_spi_bus() {
   ESP_ERROR_CHECK(spi_bus_initialize(SPI2_HOST, &bus_cfg, SPI_DMA_CH_AUTO));
 }
 
-lv_display_t *display_start(void) {
+void display_start(void) {
   ESP_LOGD(DISP_TAG, "Install panel IO");
   esp_lcd_panel_io_handle_t io_handle = NULL;
   esp_lcd_panel_io_spi_config_t io_config =
@@ -138,23 +137,6 @@ lv_display_t *display_start(void) {
   const lvgl_port_cfg_t lvgl_cfg = ESP_LVGL_PORT_INIT_CONFIG();
   ESP_ERROR_CHECK(lvgl_port_init(&lvgl_cfg));
   disp = lvgl_port_add_disp(&disp_cfg);
-
-  return disp;
-}
-
-void lv_example_get_started_1(void) {
-  lvgl_port_lock(0);
-  /*Change the active screen's background color*/
-  lv_obj_set_style_bg_color(lv_screen_active(), lv_color_hex(0x000000),
-                            LV_PART_MAIN);
-
-  /*Create a white label, set its text and align it to the center*/
-  lv_obj_t *label = lv_label_create(lv_screen_active());
-  lv_label_set_text(label, "Hello world");
-  lv_obj_set_style_text_color(lv_screen_active(), lv_color_hex(0xffffff),
-                              LV_PART_MAIN);
-  lv_obj_align(label, LV_ALIGN_CENTER, 0, 0);
-  lvgl_port_unlock();
 }
 
 void app_main(void) {
@@ -164,7 +146,7 @@ void app_main(void) {
   display_start();
 
   lv_tick_set_cb(elapsed_time);
-  lv_example_get_started_1();
+  lvgl_app(disp);
 
   while (1) {
     ESP_LOGW("LVGL", ".");
