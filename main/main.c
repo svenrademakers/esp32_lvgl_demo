@@ -10,7 +10,6 @@
 #include "hal/ledc_types.h"
 #include "hal/spi_types.h"
 #include "init.h"
-#include "lvgl_lottie.h"
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
@@ -20,7 +19,7 @@
 #define WIDTH DIAMETER
 #define HEIGHT 360
 
-#define DISP_BUF_SIZE 4092 * 2
+#define DISP_BUF_SIZE 4092 * 4
 #define DISP_TAG "DISP_INIT"
 
 #define QSPI_CLK 9
@@ -33,6 +32,8 @@
 
 static esp_lcd_panel_handle_t panel_handle = NULL;
 static lv_display_t *disp;
+
+void lvgl_app(lv_display_t *display);
 
 void init_backlight(void) {
   ledc_timer_config_t ledc_timer = {0};
@@ -149,7 +150,6 @@ void app_main(void) {
   lvgl_app(disp);
 
   while (1) {
-    ESP_LOGW("LVGL", ".");
     uint32_t time_till_next = lv_timer_handler();
     vTaskDelay(time_till_next / portTICK_PERIOD_MS);
   }
